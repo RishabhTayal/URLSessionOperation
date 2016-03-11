@@ -1,0 +1,10 @@
+PODS:
+  - TRVSURLSessionOperation (0.0.1)
+
+DEPENDENCIES:
+  - TRVSURLSessionOperation
+
+SPEC CHECKSUMS:
+  TRVSURLSessionOperation: 27b9b57e41715d8c7c5371f968016dc3ddeb460d
+
+COCOAPODS: 0.39.0

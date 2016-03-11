@@ -9,17 +9,16 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        //        var arr = [3,5,6,1,4,2]
+        for var i = 0; i < 50; i++ {
+            Caller().requestWithDefaultUrl(i, completion: { (s: NSString?) -> Void in
+                //                print(i)
+            })
+        }
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-
 }
 
