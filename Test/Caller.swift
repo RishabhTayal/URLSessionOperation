@@ -12,11 +12,11 @@ import TRVSURLSessionOperation
 class Caller: NSObject {
     
     typealias CompletionBlock = NSString? -> Void
-    let queue = NSOperationQueue()
+    static let queue = NSOperationQueue()
     
-    var refreshTokenOperation: TRVSURLSessionOperation!
+    static var refreshTokenOperation: TRVSURLSessionOperation!
     
-    func requestWithDefaultUrl(number: Int, completion: CompletionBlock) {
+    class func requestWithDefaultUrl(number: Int, completion: CompletionBlock) {
         
         let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
         
@@ -29,53 +29,38 @@ class Caller: NSObject {
         }
         
         if number >= 20 {
-            if number == 20 {
+            if number ==  20 {
+                let refreshRequest = NSURLRequest(URL: NSURL(string: "http://www.mocky.io/v2/56e2ef972600001d0776f506")!)
+                Caller.refreshTokenOperation = TRVSURLSessionOperation(session: session, request: refreshRequest, completionHandler: { (d: NSData!, r: NSURLResponse!, e: NSError!) -> Void in
+                    if let d = d {
+                        print("\n")
+                        print(number)
+                        //                    print(number)
+                        //                    self.queue.suspended = false
+                        completion(NSString(data: d, encoding: NSUTF8StringEncoding))
+                    }
+                })
+                queue.addOperation(Caller.refreshTokenOperation)
+                
                 queue.suspended = true
-                //                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), { () -> Void in
-                //                    sleep(5)
-                //                })
+                
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), { () -> Void in
+                    sleep(10)
+                    queue.suspended = false
+                })
             }
-            //Refresh the Token
-            //            let request = NSURLRequest(URL: NSURL(string: "http://www.mocky.io/v2/56e1e0d4260000f80ceaa2ab")!)
-            refreshTokenOperation = TRVSURLSessionOperation(session: session, request: request, completionHandler: { (d: NSData!, r: NSURLResponse!, e: NSError!) -> Void in
-                if let d = d {
-                    print(number)
-                    self.queue.suspended = false
-                    completion(NSString(data: d, encoding: NSUTF8StringEncoding))
-                }
-            })
-            operation.addDependency(refreshTokenOperation)
-            queue.addOperation(refreshTokenOperation)
             
-            //            queue.suspended = false
+            
+            operation.addDependency(Caller.refreshTokenOperation)
+            
+            
+            //            Caller.refreshTokenOperation.task.suspend()
+            
+            //            if number == 20 {
+            //            refreshTokenOperation.task.suspend()
+            //            }
         }
         
         queue.addOperation(operation)
     }
 }
-
-//class Operation: NSOperation {
-//    
-//    let task: NSURLSessionTask
-//    let number: Int
-//    
-//    init(task: NSURLSessionTask, number: Int) {
-//        self.task = task
-//        self.number = number
-//        super.init()
-//    }
-//    
-//    override func start() {
-//        
-//        if number != 20 {
-//            //            sleep(5)
-//            task.resume()
-//        } else {
-//            //            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), { () -> Void in
-//            //            task.resume()
-//            //            })
-//            
-//        }
-//        print(number)
-//    }
-//}

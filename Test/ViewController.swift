@@ -15,9 +15,11 @@ class ViewController: UIViewController {
         
         //        var arr = [3,5,6,1,4,2]
         for var i = 0; i < 50; i++ {
-            Caller().requestWithDefaultUrl(i, completion: { (s: NSString?) -> Void in
+            
+            Caller.requestWithDefaultUrl(i, completion: { (s: NSString?) -> Void in
                 //                print(i)
             })
+            
         }
     }
 }
