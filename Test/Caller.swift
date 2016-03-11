@@ -47,7 +47,7 @@ class Caller: NSObject {
                 queue.suspended = true
                 
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), { () -> Void in
-                    sleep(20)
+                    sleep(2)
                     queue.suspended = false
                 })
             }
@@ -103,7 +103,7 @@ class Operation: NSOperation {
     }
     
     override func start() {
-        print(number)
+        print(task?.currentRequest?.URL)
         task!.resume()
     }
     
