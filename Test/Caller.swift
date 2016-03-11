@@ -25,12 +25,12 @@ class Caller: NSObject {
         let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
         
         let request = NSURLRequest(URL: NSURL(string: "http://www.mocky.io/v2/56e1e0d4260000f80ceaa2ab")!)
-        let operation = Operation(session: session, request: request) { (d, r, e) -> Void in
+        let operation = Operation(session: session, request: request, completion: { (d, r, e) -> Void in
             if let d = d {
-                print(number)
+                //                print(number)
                 completion(NSString(data: d, encoding: NSUTF8StringEncoding))
             }
-        }
+            }, number: number)
         
         if number >= 20 {
             if number ==  20 {
@@ -38,31 +38,21 @@ class Caller: NSObject {
                 Caller.refreshTokenOperation = Operation(session: session, request: refreshRequest, completion: { (d, r, e) -> Void in
                     if let d = d {
                         print("\n")
-                        print(number)
-                        //                    print(number)
-                        //                    self.queue.suspended = false
+                        //                        print(number)
                         completion(NSString(data: d, encoding: NSUTF8StringEncoding))
                     }
-                })
+                    }, number: number)
                 queue.addOperation(Caller.refreshTokenOperation)
                 
                 queue.suspended = true
                 
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), { () -> Void in
-                    sleep(2)
+                    sleep(20)
                     queue.suspended = false
                 })
             }
             
-            
             operation.addDependency(Caller.refreshTokenOperation)
-            
-            
-            //            Caller.refreshTokenOperation.task.suspend()
-            
-            //            if number == 20 {
-            //            refreshTokenOperation.task.suspend()
-            //            }
         }
         
         queue.addOperation(operation)
@@ -100,16 +90,20 @@ class Operation: NSOperation {
         }
     }
     
-    init(session: NSURLSession, request: NSURLRequest, completion: ((d: NSData?, r: NSURLResponse?, e: NSError?) -> Void)) {
+    var number: Int?
+    
+    init(session: NSURLSession, request: NSURLRequest, completion: ((d: NSData?, r: NSURLResponse?, e: NSError?) -> Void), number: Int) {
         super.init()
         self.task = session.dataTaskWithRequest(request, completionHandler: { (d: NSData?, r: NSURLResponse?, e: NSError?) -> Void in
             completion(d: d, r: r, e: e)
             self.executing = false
             self.finished = true
         })
+        self.number = number
     }
     
     override func start() {
+        print(number)
         task!.resume()
     }
     
